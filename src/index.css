@@ -1,0 +1,255 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { @apply font-sans text-ink bg-white antialiased; }
+:focus-visible { outline: 2px solid #38bdf8; outline-offset: 2px; }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.animate-ticker { animation: ticker 30s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .animate-ticker { animation: none; } }
+
+/* ---- Dynamic effects (all disabled for visitors who prefer reduced motion) ---- */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.is-visible { opacity: 1; transform: none; }
+  .bounce-slow { animation: bounce-slow 2s ease-in-out infinite; }
+}
+@keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+
+/* Home hero: rotating word. One word at a time: the old word slides up + fades out, THEN the new one
+   slides up + fades in. Width is reserved for the longest word; overflow is clipped. */
+/* static heading parts: extra paint room so letters such as "g" and "," are never cut off (no layout change) */
+.hero-ink { padding-block: .14em; padding-inline-end: .05em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+/* gap before the rotating word; sits at the end of "Empowering", so it never indents the word when it wraps */
+.hero-ink.hero-gap { padding-inline-end: .19em; }
+.rotating-words { display: inline-grid; overflow: hidden; white-space: nowrap; margin-block: -.12em; }
+.rotating-word { grid-area: 1 / 1; padding-block: .12em; padding-inline: .04em; white-space: nowrap; opacity: 0; visibility: hidden; transform: translateY(100%); }
+.rotating-word.is-active { opacity: 1; visibility: visible; transform: none; }
+.rotating-word.is-leaving { opacity: 0; visibility: visible; transform: translateY(-100%); }
+
+/* Background slideshows (Home hero, inner-page banners, Donate photo): crossfade, never resizes its parent */
+.bg-slideshow { position: absolute; inset: 0; overflow: hidden; isolation: isolate; }
+.bg-slide { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; opacity: 0; z-index: 0; }
+.bg-slide.is-base { opacity: 1; }
+.bg-slide.is-prev { opacity: 1; z-index: 1; }
+.bg-slide.is-active { opacity: 1; z-index: 2; }
+.bg-slide-overlay { position: absolute; inset: 0; z-index: 3; }
+
+/* Page change: content slides in gently. Section links: the target section slides in too. */
+@keyframes page-enter { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  .rotating-word.is-leaving { transition: transform .45s cubic-bezier(.55, 0, .75, .2), opacity .45s ease-in; }
+  .rotating-word.is-active { transition: transform .55s cubic-bezier(.2, .8, .3, 1) .45s, opacity .55s ease-out .45s; }
+  .bg-slide.is-active { transition: opacity var(--slide-fade, 1200ms) ease-in-out; }
+  .page-enter { animation: page-enter .5s cubic-bezier(.22, .8, .3, 1) backwards; }
+  .section-enter { animation: page-enter .6s cubic-bezier(.22, .8, .3, 1) backwards; }
+}
+@media print { header, footer, nav, .print\:hidden { display: none !important; } }
+
+/* =====================================================================
+   NORMAL BUTTONS (.btn): soft, clean hover
+   A ring of light runs around the edge and a gleam sweeps across the face.
+   The button lifts slightly and presses down when clicked. No stars.
+   ===================================================================== */
+@property --btn-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+@keyframes btn-spin { to { --btn-angle: 360deg; } }
+
+@layer components {
+  .btn {
+    position: relative; isolation: isolate; overflow: hidden;
+    display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+    border-radius: 9999px; padding: .75rem 1.5rem; font-size: .875rem; font-weight: 600; line-height: 1.25rem;
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+    --ring-a: #38bdf8; --ring-b: #ffffff; --gleam: rgb(255 255 255 / .55);
+    transition: transform .22s ease, box-shadow .25s ease, background-color .25s ease, color .25s ease, border-color .25s ease;
+  }
+  /* buttons with a light face use blue light instead of white */
+  .btn:not(.btn-primary):not(.btn-brand):not(.btn-outline) { --ring-a: #1479d1; --ring-b: #38bdf8; --gleam: rgb(56 189 248 / .3); }
+
+  /* the running ring of light (masked so only the border shows) */
+  .btn::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; padding: 2px; pointer-events: none;
+    background: conic-gradient(from var(--btn-angle), transparent 0 50%, var(--ring-a) 68%, var(--ring-b) 80%, var(--ring-a) 92%, transparent 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    opacity: 0; transition: opacity .3s ease;
+    animation: btn-spin 2.2s linear infinite; animation-play-state: paused;
+  }
+  /* the gleam that sweeps across */
+  .btn::after {
+    content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 60%; z-index: -1; pointer-events: none;
+    background: linear-gradient(105deg, transparent 0%, var(--gleam) 50%, transparent 100%);
+    transform: translateX(-130%) skewX(-18deg);
+  }
+  .btn:hover::before, .btn:focus-visible::before { opacity: 1; animation-play-state: running; }
+  .btn:hover::after, .btn:focus-visible::after { transform: translateX(260%) skewX(-18deg); transition: transform .9s ease; }
+
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: translateY(0) scale(.97); }
+  .btn:disabled, .btn[aria-disabled="true"] { cursor: not-allowed; }
+  .btn:disabled:hover { transform: none; box-shadow: none; }
+  .btn:disabled::before, .btn:disabled::after { display: none; }
+  .btn [aria-hidden="true"] { display: inline-block; transition: transform .2s ease; }
+  .btn:hover [aria-hidden="true"] { transform: translateX(4px); }
+
+  .btn-primary { color: #fff; background-color: #1479d1; box-shadow: 0 2px 6px rgb(20 121 209 / .3); }
+  .btn-primary:hover { background-color: #0f66b3; box-shadow: 0 8px 18px -4px rgb(20 121 209 / .5), inset 0 0 16px rgb(255 255 255 / .18); }
+  .btn-brand { color: #fff; background-color: #1479d1; box-shadow: 0 2px 6px rgb(20 121 209 / .3); }
+  .btn-brand:hover { background-color: #0b4f9c; box-shadow: 0 8px 18px -4px rgb(11 79 156 / .5), inset 0 0 16px rgb(255 255 255 / .15); }
+  .btn-white { color: #0b4f9c; background-color: #fff; border: 1px solid rgb(20 121 209 / .25); box-shadow: 0 2px 6px rgb(11 79 156 / .12); }
+  .btn-white:hover { background-color: #f0f8ff; border-color: #1479d1; box-shadow: 0 8px 18px -4px rgb(11 79 156 / .3); }
+  .btn-outline { color: #fff; border: 2px solid #fff; background-color: transparent; }
+  .btn-outline:hover { background-color: rgb(255 255 255 / .14); box-shadow: 0 8px 18px -4px rgb(0 0 0 / .3); }
+
+  /* WHITE BUTTONS (.btn-light): one shared style for Explore Programs, Get Involved and the Field Presence
+     location buttons. Static: no ring, gleam or lift animation, just a soft colour change on hover. */
+  .btn-light {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+    border-radius: 9999px; border: 1px solid rgb(20 121 209 / .25); background-color: #fff; color: #0b4f9c;
+    font-weight: 600; line-height: 1.25rem; white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 2px 6px rgb(11 79 156 / .12);
+    transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, color .2s ease;
+  }
+  .btn-light:hover, .btn-light:focus-visible { background-color: #f0f8ff; border-color: #1479d1; box-shadow: 0 6px 14px -6px rgb(11 79 156 / .35); }
+  /* same height, padding and text size as the large donate button next to it (.dbtn-lg) */
+  .btn-light-lg { min-height: 3.7rem; padding: .6rem 2rem; font-size: 1.1rem; }
+  .btn-light-sm { padding: .5rem 1rem; font-size: .875rem; font-weight: 500; }
+  .btn-light.is-active { border-color: #7dd3fc; box-shadow: 0 0 0 3px rgb(125 211 252 / .6); font-weight: 600; }
+
+  /* on dark sections blue buttons turn white so they stay visible */
+  :is(.bg-brand-dark, .bg-ink, .from-brand-dark, footer) .btn-primary,
+  :is(.bg-brand-dark, .bg-ink, .from-brand-dark, footer) .btn-brand { color: #0b4f9c; background-color: #fff; box-shadow: 0 2px 6px rgb(0 0 0 / .2); --ring-a: #1479d1; --ring-b: #38bdf8; --gleam: rgb(56 189 248 / .3); }
+  :is(.bg-brand-dark, .bg-ink, .from-brand-dark, footer) .btn-primary:hover,
+  :is(.bg-brand-dark, .bg-ink, .from-brand-dark, footer) .btn-brand:hover { background-color: #e6f3fd; }
+
+  .eyebrow { @apply text-xs font-semibold uppercase tracking-widest text-brand; }
+  .h2 { @apply font-serif text-2xl sm:text-3xl md:text-4xl font-bold leading-tight; }
+  .container-site { @apply mx-auto w-full max-w-site px-4 md:px-6; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn, .btn:hover, .btn:active, .btn [aria-hidden="true"] { transition: none; transform: none; }
+  .btn::before { animation: none; }
+  .btn::after { display: none; }
+}
+
+/* other clickable controls (filters, amounts, arrows): tiny lift only */
+button:not(.btn):not(.dbtn):not(.btn-light):not(:disabled):hover { transform: translateY(-1px); }
+button:not(.btn):not(.dbtn):not(.btn-light):not(:disabled):active { transform: scale(.97); }
+@media (prefers-reduced-motion: reduce) { button:not(.btn):not(.dbtn):hover, button:not(.btn):not(.dbtn):active { transform: none; } }
+
+/* =====================================================================
+   DONATION BUTTONS (.dbtn): heart badge that tilts + fills on hover,
+   pops with a ring and a burst of dots on click.
+   ===================================================================== */
+.dbtn {
+  position: relative; isolation: isolate; display: inline-flex; align-items: center; justify-content: center; gap: .6rem;
+  border-radius: 9999px; font-weight: 600; line-height: 1.25rem; white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease, background-color .25s ease, color .25s ease, border-color .25s ease;
+}
+.dbtn-sm { padding: .4rem 1.1rem .4rem .4rem; font-size: .875rem; --ico: 1.7rem; }
+.dbtn-md { padding: .5rem 1.4rem .5rem .5rem; font-size: .95rem; --ico: 2rem; }
+.dbtn-lg { padding: .6rem 2rem .6rem .6rem; font-size: 1.1rem; --ico: 2.5rem; }
+.dbtn-ico { position: relative; display: inline-flex; align-items: center; justify-content: center; width: var(--ico); height: var(--ico); border-radius: 9999px; transition: background-color .25s ease; }
+.dbtn-svg { width: 52%; height: 52%; fill: currentColor; fill-opacity: 0; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; transform-origin: 50% 80%;
+  transition: transform .35s cubic-bezier(.34,1.56,.64,1), fill-opacity .25s ease; }
+
+.dbtn-solid { color: #fff; background-image: linear-gradient(135deg, #2e9cf0 0%, #1479d1 55%, #0b5cb0 100%); box-shadow: 0 6px 14px -6px rgb(20 121 209 / .65); --dot-a: #7dd3fc; --dot-b: #ffffff; }
+.dbtn-solid .dbtn-ico { background-color: rgb(255 255 255 / .2); }
+.dbtn-solid:hover { transform: translateY(-3px); box-shadow: 0 14px 26px -8px rgb(20 121 209 / .7), 0 0 0 4px rgb(56 189 248 / .22); }
+.dbtn-solid:hover .dbtn-ico { background-color: rgb(255 255 255 / .32); }
+
+.dbtn-outline { color: #0b4f9c; background-color: #fff; border: 2px solid #1479d1; --dot-a: #38bdf8; --dot-b: #1479d1; }
+.dbtn-outline .dbtn-ico { background-color: #e6f3fd; }
+.dbtn-outline:hover { transform: translateY(-3px); color: #fff; background-color: #1479d1; box-shadow: 0 12px 22px -8px rgb(20 121 209 / .6); }
+.dbtn-outline:hover .dbtn-ico { background-color: rgb(255 255 255 / .25); }
+
+/* on dark sections the solid button turns white */
+:is(.bg-brand-dark, .bg-ink, .from-brand-dark, footer) .dbtn-solid { color: #0b4f9c; background-image: none; background-color: #fff; box-shadow: 0 6px 14px -6px rgb(0 0 0 / .4); --dot-a: #38bdf8; --dot-b: #1479d1; }
+:is(.bg-brand-dark, .bg-ink, .from-brand-dark, footer) .dbtn-solid .dbtn-ico { background-color: #e6f3fd; }
+:is(.bg-brand-dark, .bg-ink, .from-brand-dark, footer) .dbtn-solid:hover { background-color: #eaf6ff; box-shadow: 0 14px 26px -8px rgb(0 0 0 / .45), 0 0 0 4px rgb(125 211 252 / .3); }
+.dbtn-float, .dbtn-float:hover { box-shadow: 0 0 0 3px rgb(255 255 255 / .95), 0 12px 26px -6px rgb(11 79 156 / .55); }
+
+/* icon: tilts like a raised thumb and fills in */
+.dbtn:hover .dbtn-svg, .dbtn:focus-visible .dbtn-svg { transform: rotate(-16deg) scale(1.22); fill-opacity: 1; }
+.dbtn:active { transform: translateY(0) scale(.95); transition-duration: .1s; }
+.dbtn:disabled { opacity: .6; cursor: not-allowed; }
+.dbtn:disabled:hover { transform: none; box-shadow: none; }
+.dbtn:disabled:hover .dbtn-svg { transform: none; fill-opacity: 0; }
+
+/* ring that ripples out of the badge (repeats while hovering, once on click) */
+.dbtn-ico::after { content: ""; position: absolute; inset: 0; border-radius: 9999px; border: 2px solid currentColor; opacity: 0; pointer-events: none; }
+/* dots that fly out on click */
+.dbtn-burst { position: absolute; inset: 0; pointer-events: none; }
+.dbtn-burst i { position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 9999px; background: var(--dot-a, #7dd3fc); opacity: 0; }
+.dbtn-burst i:nth-child(even) { background: var(--dot-b, #fff); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .dbtn:hover .dbtn-ico::after { animation: dbtn-ring 1.3s ease-out infinite; }
+  .dbtn:not(:hover):not(.is-burst):not(:disabled) .dbtn-svg { animation: dbtn-beat 3s ease-in-out infinite; }
+  .dbtn.is-burst .dbtn-ico::after { animation: dbtn-ring .6s ease-out 1; }
+  .dbtn.is-burst .dbtn-svg { animation: dbtn-pop .55s cubic-bezier(.34,1.56,.64,1) 1; fill-opacity: 1; }
+  .dbtn.is-burst .dbtn-burst i { animation: dbtn-dot .65s cubic-bezier(.2,.7,.3,1) forwards; }
+}
+@keyframes dbtn-ring { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(2.3); opacity: 0; } }
+@keyframes dbtn-beat { 0%, 55%, 100% { transform: scale(1); } 65% { transform: scale(1.18); } 75% { transform: scale(1); } 85% { transform: scale(1.12); } }
+@keyframes dbtn-pop { 0% { transform: scale(1) rotate(0); } 40% { transform: scale(1.6) rotate(-26deg); } 100% { transform: scale(1.22) rotate(-16deg); } }
+@keyframes dbtn-dot { 0% { opacity: 1; transform: rotate(var(--a)) translateY(0) scale(1); } 100% { opacity: 0; transform: rotate(var(--a)) translateY(calc(var(--ico) * -1.35)) scale(.3); } }
+@media (prefers-reduced-motion: reduce) { .dbtn, .dbtn:hover, .dbtn:active { transition: none; transform: none; } .dbtn-svg { transition: none; } }
+
+/* social icons */
+.social-icon { transition: transform .25s cubic-bezier(.2,.8,.2,1), background-color .25s, box-shadow .25s; }
+.social-icon:hover, .social-icon:focus-visible { transform: translateY(-4px) scale(1.12); background-color: var(--brand); box-shadow: 0 0 0 3px rgb(255 255 255 / .25), 0 8px 22px -4px var(--brand); }
+
+/* Live impact dashboard cards: grow when the pointer is over them, return to normal when it leaves */
+.impact-card { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, background-color .3s ease; will-change: transform; }
+.impact-card:hover, .impact-card:focus-visible {
+  transform: scale(1.12) translateY(-4px); z-index: 20;
+  box-shadow: 0 22px 40px -14px rgb(20 121 209 / .45), 0 0 0 2px rgb(56 189 248 / .7);
+  background-color: #f5fbff;
+}
+.impact-card:active { transform: scale(1.06); }
+@media (prefers-reduced-motion: reduce) { .impact-card, .impact-card:hover, .impact-card:focus-visible { transition: none; transform: none; } }
+
+/* hides the scrollbar on the testimonial slider (still scrolls by swipe, arrows and keyboard) */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ===== Flowing wave (hero bottoms on every public page + Donate) ===== */
+.wave { position: absolute; left: 0; right: 0; bottom: -1px; height: 70px; overflow: hidden; pointer-events: none; z-index: 2; }
+@media (min-width: 768px) { .wave { height: 110px; } }
+.wave-layer { position: absolute; bottom: 0; left: 0; width: 200%; height: 100%; display: block; }
+@media (prefers-reduced-motion: no-preference) {
+  .wave-a { animation: wave-x 26s linear infinite; }
+  .wave-b { animation: wave-x 18s linear infinite reverse; }
+  .wave-c { animation: wave-x 12s linear infinite; }
+}
+@keyframes wave-x { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ===== Donate: continuous vertical image scroll ===== */
+@media (prefers-reduced-motion: no-preference) { .v-marquee { animation: v-marquee calc(var(--n, 3) * 9s) linear infinite; } }
+@keyframes v-marquee { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+
+/* =====================================================================
+   PHONES
+   ===================================================================== */
+/* long words, emails and registration numbers wrap instead of pushing the page sideways */
+body { overflow-wrap: break-word; }
+/* form controls below 16px make iOS Safari zoom the page when they get focus */
+@media (max-width: 767px) { input, select, textarea { font-size: 16px; } }
+
+/* big pill buttons: slightly smaller on phones, and never wider than their container */
+.dbtn, .btn, .btn-light { max-width: 100%; }
+@media (max-width: 479px) {
+  .dbtn-lg { padding: .55rem 1.4rem .55rem .55rem; font-size: 1rem; --ico: 2.25rem; }
+  .btn-light-lg { min-height: 3.35rem; padding: .55rem 1.4rem; font-size: 1rem; }
+  .dbtn, .btn-light-lg { white-space: normal; }
+  .dbtn-label { text-align: center; }
+}
+
+/* touch screens have no real hover: without this the lift / zoom effects stay stuck after a tap */
+@media (hover: none) {
+  .btn:hover, .dbtn:hover, button:not(.btn):not(.dbtn):not(.btn-light):not(:disabled):hover { transform: none; }
+  .btn:active, .dbtn:active, button:not(.btn):not(.dbtn):not(.btn-light):not(:disabled):active { transform: scale(.97); }
+  .impact-card:hover { transform: none; box-shadow: none; background-color: #fff; }
+  .social-icon:hover { transform: none; }
+}

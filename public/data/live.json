@@ -1,0 +1,65 @@
+{
+  "stats": [
+    {
+      "label": "Direct & indirect beneficiaries",
+      "value": 25000,
+      "suffix": "+"
+    },
+    {
+      "label": "Children in education programmes",
+      "value": 3000,
+      "suffix": "+"
+    },
+    {
+      "label": "Patients supported",
+      "value": 2000,
+      "suffix": "+ patients"
+    },
+    {
+      "label": "Women in SHGs & livelihoods",
+      "value": 1500,
+      "suffix": "+"
+    },
+    {
+      "label": "Environment participants",
+      "value": 5000,
+      "suffix": "+"
+    },
+    {
+      "label": "Working since",
+      "value": 2004,
+      "plain": true
+    }
+  ],
+  "campaigns": [
+    {
+      "id": "school-kits",
+      "title": "School kits for children",
+      "text": "Bags, notebooks and stationery for children in our Shiksha Kendras.",
+      "goal": 100000,
+      "raised": 42000,
+      "cause": "Child Education",
+      "sample": true
+    },
+    {
+      "id": "winter-blankets",
+      "title": "Winter Blanket & Cloth Drive",
+      "text": "Blankets and warm clothing for families and senior citizens.",
+      "goal": 150000,
+      "raised": 68000,
+      "cause": "Social Relief",
+      "sample": true
+    }
+  ],
+  "events": [
+    {
+      "id": "sample-health-camp",
+      "title": "Free Health Check-up Camp (sample)",
+      "date": "2026-11-15",
+      "time": "10:00 AM - 2:00 PM",
+      "place": "Village venue to be announced",
+      "text": "Replace this sample with a real, verified drive. Samples are hidden on the live site.",
+      "sample": true
+    }
+  ]
+}

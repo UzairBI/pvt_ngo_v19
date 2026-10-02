@@ -1,0 +1,19 @@
+{
+  "name": "Sahara Jan Kalyan Samiti",
+  "address": "21/419, Behind TCPC, Khurai Road, Shastri Ward No. 20, Near Hotel Ahilya, Sagar, Madhya Pradesh - 470002, India",
+  "email": "info@saharangosag.com",
+  "phone": "+91 7582-404399",
+  "pan": "AAHTS0799M",
+  "receiptPrefix": "SJKS",
+  "signatory": "Authorised Signatory",
+  "taxReceipt": {
+    "enabled": true,
+    "type": "80G",
+    "registrationNo": "AAHTS0799M25BP02",
+    "validity": "AY 2027-28 to AY 2031-32",
+    "section12A": "AAHTS0799M25BP01",
+    "ein": "",
+    "cashLimit": 2000
+  },
+  "defaultRequestMessage": "Dear {{name}},\n\nThank you for contacting {{org}}. As requested (reference {{reference}}), please find attached: {{document_type}}.\n\nIf you need anything further, simply reply to this email.\n\nWarm regards,\n{{org}}"
+}
