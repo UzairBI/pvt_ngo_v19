@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html { scroll-behavior: smooth; scroll-padding-top: 6rem; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body { @apply font-sans text-ink bg-white antialiased; }
 :focus-visible { outline: 2px solid #38bdf8; outline-offset: 2px; }
 @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -34,6 +34,10 @@ body { @apply font-sans text-ink bg-white antialiased; }
 .bg-slide.is-prev { opacity: 1; z-index: 1; }
 .bg-slide.is-active { opacity: 1; z-index: 2; }
 .bg-slide-overlay { position: absolute; inset: 0; z-index: 3; }
+/* "shift" effect (Home hero): the old photo slides out to the left while the next one slides in from the right */
+.bg-slideshow.is-shift .bg-slide { opacity: 1; visibility: hidden; transform: translateX(100%); }
+.bg-slideshow.is-shift .bg-slide.is-base, .bg-slideshow.is-shift .bg-slide.is-active { visibility: visible; transform: none; }
+.bg-slideshow.is-shift .bg-slide.is-prev { visibility: visible; transform: translateX(-100%); }
 
 /* Page change: content slides in gently. Section links: the target section slides in too. */
 @keyframes page-enter { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
@@ -41,6 +45,7 @@ body { @apply font-sans text-ink bg-white antialiased; }
   .rotating-word.is-leaving { transition: transform .45s cubic-bezier(.55, 0, .75, .2), opacity .45s ease-in; }
   .rotating-word.is-active { transition: transform .55s cubic-bezier(.2, .8, .3, 1) .45s, opacity .55s ease-out .45s; }
   .bg-slide.is-active { transition: opacity var(--slide-fade, 1200ms) ease-in-out; }
+  .bg-slideshow.is-shift .bg-slide.is-active, .bg-slideshow.is-shift .bg-slide.is-prev { transition: transform var(--slide-fade, 1200ms) cubic-bezier(.65, 0, .25, 1); }
   .page-enter { animation: page-enter .5s cubic-bezier(.22, .8, .3, 1) backwards; }
   .section-enter { animation: page-enter .6s cubic-bezier(.22, .8, .3, 1) backwards; }
 }
@@ -228,6 +233,15 @@ button:not(.btn):not(.dbtn):not(.btn-light):not(:disabled):active { transform: s
 /* ===== Donate: continuous vertical image scroll ===== */
 @media (prefers-reduced-motion: no-preference) { .v-marquee { animation: v-marquee calc(var(--n, 3) * 9s) linear infinite; } }
 @keyframes v-marquee { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+
+/* Floating nav pill: frosted glass (the page photo shows through, tinted white), with both ends fading out */
+.nav-glass {
+  background: linear-gradient(to bottom, rgb(255 255 255 / .82), rgb(255 255 255 / .66));
+  -webkit-backdrop-filter: blur(16px) saturate(1.5); backdrop-filter: blur(16px) saturate(1.5);
+  box-shadow: 0 10px 30px -10px rgb(6 26 54 / .5), inset 0 1px 0 rgb(255 255 255 / .6);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+}
 
 /* =====================================================================
    PHONES

@@ -44,10 +44,10 @@ export default function Donate() {
     <section className="grid lg:grid-cols-2" aria-labelledby="donate-title">
       {/* photo: full height of the page on large screens, a banner on phones */}
       <div className="relative h-64 bg-ink sm:h-80 lg:h-auto">
-        <div className="relative h-full w-full overflow-hidden lg:sticky lg:top-[85px] lg:h-[calc(100vh-85px)]">
+        <div className="relative h-full w-full overflow-hidden lg:sticky lg:top-0 lg:h-screen">
           <div aria-hidden="true" className="v-marquee absolute inset-x-0 top-0 flex flex-col" style={{ ["--n" as string]: donationSlides.length }}>
             {[...donationSlides, ...donationSlides].map((src, i) => (
-              <img key={i} src={src} alt="" decoding="async" loading={i < 2 ? "eager" : "lazy"} className="h-64 w-full shrink-0 object-cover sm:h-80 lg:h-[calc(100vh-85px)]" />
+              <img key={i} src={src} alt="" decoding="async" loading={i < 2 ? "eager" : "lazy"} className="h-64 w-full shrink-0 object-cover sm:h-80 lg:h-screen" />
             ))}
           </div>
           <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent lg:from-ink/70 lg:via-transparent" />
@@ -59,7 +59,7 @@ export default function Donate() {
       </div>
 
       {/* light-blue panel with the donation card */}
-      <div className="relative isolate flex items-center justify-center overflow-hidden bg-[#eef8ff] px-4 py-8 sm:py-12 md:px-10 lg:py-20">
+      <div className="relative isolate flex items-center justify-center overflow-hidden bg-[#eef8ff] px-4 py-8 sm:py-12 md:px-10 lg:pb-20 lg:pt-32">
         <svg aria-hidden="true" viewBox="0 0 160 220" className="pointer-events-none absolute -top-4 left-0 -z-10 hidden h-56 w-40 text-brand sm:block" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M0 210C40 150 80 110 110 0" opacity=".55" /><path d="M24 214C64 154 104 114 134 4" opacity=".4" /><path d="M48 218C88 158 128 118 158 8" opacity=".25" />
         </svg>

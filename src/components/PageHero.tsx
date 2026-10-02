@@ -7,7 +7,7 @@ import Wave from "./Wave";
 export default function PageHero({ eyebrow, title, text, images }: { eyebrow: string; title: string; text?: string; images?: string[] }) {
   const img = images?.[0];
   return (
-    <section className="relative isolate overflow-hidden bg-gradient-to-br from-brand-dark to-brand pb-24 pt-12 text-white sm:pt-16 md:pb-36 md:pt-24">
+    <section className="relative isolate overflow-hidden bg-gradient-to-br from-brand-dark to-brand pb-24 pt-28 text-white sm:pt-32 md:pb-36 md:pt-40">
       {img && <img src={img} alt="" loading="eager" decoding="async" className="absolute inset-0 -z-20 h-full w-full object-cover object-[center_35%]" />}
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-[#061a36]/90 via-[#0b3d7a]/65 to-[#0b4f9c]/20" />
       <div className="container-site max-w-3xl md:max-w-site">

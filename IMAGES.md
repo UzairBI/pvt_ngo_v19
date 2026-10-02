@@ -6,7 +6,7 @@ are shown (and in what order) are all in **`src/data/slideshows.ts`**.
 | Folder | Shown on | Photo shape | Suggested size |
 |---|---|---|---|
 | `public/images/featured/` | Separate reusable set (not shown on Home) | Landscape | 1600 x 900 or larger |
-| `public/images/home/` | Home hero: ONE static photo, `home-hero-01.jpg` | Landscape | 1920 x 1080 or larger |
+| `public/images/home/` | Home hero slideshow: `hero-slide-01.jpg` to `hero-slide-05.jpg` (list: `homeHeroSlides`) | Landscape | 1920 x 1080 or larger |
 | `public/images/donation/` | **Donate page only** | **Vertical (portrait)** | 1200 x 1600 (3:4) or 1200 x 1500 (4:5) |
 | `public/images/about/` | About banner | Landscape | 1600 x 700 or larger |
 | `public/images/projects/` | Projects banner | Landscape | 1600 x 700 or larger |

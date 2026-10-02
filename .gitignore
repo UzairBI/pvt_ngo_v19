@@ -8,3 +8,6 @@ build/
 server/storage/session.secret
 server/data.db
 server/data.db-*
+
+.vercel
+.env*

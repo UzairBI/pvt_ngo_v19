@@ -13,6 +13,10 @@ interface Props {
   className?: string;
   /** Classes for each <img>, e.g. an object-position. */
   imgClassName?: string;
+  /** Extra classes for single images, keyed by image path (e.g. a different object-position per photo). */
+  imgClassNames?: Record<string, string>;
+  /** "fade" = crossfade (default). "shift" = the old photo slides out to the left while the next slides in from the right. */
+  effect?: "fade" | "shift";
   /** Optional overlay classes drawn above the images (e.g. a blue gradient). */
   overlayClassName?: string;
 }
@@ -26,10 +30,10 @@ const load = (src: string) => new Promise<string | null>((resolve) => {
 });
 
 /**
- * Background slideshow with a smooth crossfade. Fills its positioned parent and never changes its size,
+ * Background slideshow with a smooth crossfade (or a sideways shift). Fills its positioned parent and never changes its size,
  * so text on top stays still. Missing files are skipped; motion stops for visitors who prefer reduced motion.
  */
-export default function BackgroundSlideshow({ images, interval = 5000, duration = 1200, fallback, className = "", imgClassName = "", overlayClassName }: Props) {
+export default function BackgroundSlideshow({ images, interval = 5000, duration = 1200, fallback, className = "", imgClassName = "", imgClassNames = {}, effect = "fade", overlayClassName }: Props) {
   const [slides, setSlides] = useState<string[]>([]);
   // index = slide fading in / on screen (-1 before the first one appears); prev = slide still showing underneath it
   const [{ index, prev }, setPos] = useState({ index: -1, prev: -1 });
@@ -69,11 +73,11 @@ export default function BackgroundSlideshow({ images, interval = 5000, duration 
   }, [prev, index, duration]);
 
   return (
-    <div aria-hidden="true" className={`bg-slideshow ${className}`} style={{ ["--slide-fade" as string]: `${duration}ms` }}>
-      {fallback && <img src={fallback} alt="" className={`bg-slide is-base ${imgClassName}`} />}
+    <div aria-hidden="true" className={`bg-slideshow ${effect === "shift" ? "is-shift" : ""} ${className}`} style={{ ["--slide-fade" as string]: `${duration}ms` }}>
+      {fallback && <img src={fallback} alt="" className={`bg-slide is-base ${imgClassName} ${imgClassNames[fallback] ?? ""}`} />}
       {slides.map((src, i) => (
         <img key={src} src={src} alt="" decoding="async"
-          className={`bg-slide ${imgClassName} ${i === index ? "is-active" : i === prev ? "is-prev" : ""}`} />
+          className={`bg-slide ${imgClassName} ${imgClassNames[src] ?? ""} ${i === index ? "is-active" : i === prev ? "is-prev" : ""}`} />
       ))}
       {overlayClassName && <div className={`bg-slide-overlay ${overlayClassName}`} />}
     </div>

@@ -18,10 +18,19 @@ export const featuredImages = [
 ];
 
 /**
- * Home page hero: ONE static photo (no slideshow). To change it, save your photo over
- * public/images/home/home-hero-01.jpg (same name), or point this line at another file in public/images/home/.
+ * Home page hero SLIDESHOW. The first photo is shown first, then each one shifts sideways to the next.
+ * To replace a photo: save yours over the file in public/images/home/ with the same name.
+ * To add / remove a slide: add / delete a line. Order here = order on screen.
+ * `focus` = which part of the photo stays in view when it is cropped ("across% down%"):
+ * the first value pair is for phones (photo on top of the text), the `md:` pair is for wider screens (photo behind the text).
  */
-export const homeHeroImage = "/images/home/home-hero.jpg";
+export const homeHeroSlides = [
+  { src: "/images/home/hero-slide-01.jpg", focus: "object-[88%_center] md:object-[100%_60%]" },
+  { src: "/images/home/hero-slide-02.jpg", focus: "object-[90%_center] md:object-[center_65%]" },
+  { src: "/images/home/hero-slide-03.jpg", focus: "object-[58%_center] md:object-[center_40%]" },
+  { src: "/images/home/hero-slide-04.jpg", focus: "object-[100%_center] md:object-[center_50%]" },
+  { src: "/images/home/hero-slide-05.jpg", focus: "object-[80%_center] md:object-[center_20%]" }
+];
 
 /**
  * DONATION SET. Donate page only, completely separate from the featured set.

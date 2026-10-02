@@ -93,7 +93,7 @@ export default function IndiaNetworkMap() {
 
   return (
     <div ref={wrap} style={{ height: `${steps.length * 65 + 40}vh` }} className="relative">
-      <div className="sticky top-16 overflow-hidden rounded-3xl sm:top-20 lg:top-[88px] bg-gradient-to-br from-[#04173a] via-[#0a3d7a] to-[#1479d1] text-white shadow-xl">
+      <div className="sticky top-20 overflow-hidden rounded-3xl sm:top-24 bg-gradient-to-br from-[#04173a] via-[#0a3d7a] to-[#1479d1] text-white shadow-xl">
         {/* soft moving glow behind the map */}
         <div aria-hidden="true" className="ngo-aurora pointer-events-none absolute -left-24 -top-24 h-96 w-96 rounded-full bg-sky-400/25 blur-3xl" />
         <div aria-hidden="true" className="ngo-aurora pointer-events-none absolute -bottom-28 right-0 h-96 w-96 rounded-full bg-blue-300/20 blur-3xl [animation-delay:-6s]" />

@@ -6,7 +6,8 @@ import { useTitle } from "../hooks/useTitle";
 import { useLiveData, todayLocal } from "../hooks/useLiveData";
 import { useLang } from "../i18n/LangContext";
 import Img from "../components/Img";
-import { homeHeroImage } from "../data/slideshows";
+import { homeHeroSlides } from "../data/slideshows";
+import BackgroundSlideshow from "../components/BackgroundSlideshow";
 import RotatingWords from "../components/RotatingWords";
 import ProjectSlider from "../components/ProjectSlider";
 import Wave from "../components/Wave";
@@ -23,6 +24,8 @@ const heroWords = ["Communities", "Education", "Women", "Villages", "Students", 
 /** Hero heading colour. Applied to each part separately (not to the whole <h1>) so the rotating word renders correctly in Safari. */
 const heroInk = "text-white";
 const heroAccent = "text-sky-300";
+const heroImages = homeHeroSlides.map((s) => s.src);
+const heroFocus = Object.fromEntries(homeHeroSlides.map((s) => [s.src, s.focus]));
 
 export default function Home() {
   useTitle(undefined, "Community health, education, women empowerment, tree plantation and disaster relief.");
@@ -34,13 +37,16 @@ export default function Home() {
   return (
     <>
       {/* Hero (light sky-blue) */}
-      <section className="relative isolate flex min-h-[520px] items-center overflow-hidden bg-[#061a36] pb-20 text-white sm:min-h-[560px] md:min-h-[540px] md:pb-24">
-        <div aria-hidden="true" className="absolute inset-0 -z-20">
-          <img src={homeHeroImage} alt="" loading="eager" decoding="async" className="h-full w-full object-cover object-[75%_center]" />
+      {/* Photo slideshow (src/data/slideshows.ts). Phones: the photos sit on top, uncovered, with the text below.
+          From md up: the photos fill the whole hero behind the text. */}
+      <section className="relative isolate overflow-hidden bg-[#061a36] pb-20 text-white md:flex md:min-h-[540px] md:items-center md:pb-24">
+        <div aria-hidden="true" className="relative h-[min(88vw,400px)] md:absolute md:inset-0 md:-z-20 md:h-auto">
+          <BackgroundSlideshow images={heroImages} imgClassNames={heroFocus} fallback={heroImages[0]} effect="shift" interval={5000} duration={1100} />
+          <div className="absolute inset-x-0 bottom-0 z-10 h-20 bg-gradient-to-t from-[#061a36] to-transparent md:hidden" />
         </div>
-        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-[#04132b]/95 via-[#06244d]/70 to-transparent md:via-[#06244d]/45" />
-        
-        <div className="container-site py-10 font-hero sm:py-12 md:py-14"><div className="max-w-[720px]">
+        <div aria-hidden="true" className="absolute inset-0 -z-10 hidden bg-gradient-to-r from-[#04132b]/95 via-[#06244d]/45 to-transparent md:block" />
+
+        <div className="container-site pb-10 pt-5 font-hero md:pb-14 md:pt-32"><div className="max-w-[720px]">
           <p className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/90 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-brand-dark shadow-sm backdrop-blur sm:text-sm">
             <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-brand" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M11 14h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16" />
@@ -65,7 +71,7 @@ export default function Home() {
             </Link>
           </div>
         </div></div>
-        <a href="#impact" aria-label="Scroll to impact numbers" className="bounce-slow absolute bottom-24 left-1/2 hidden h-10 w-6 -translate-x-1/2 items-start justify-center rounded-full border-2 border-white/60 pt-2 sm:flex">
+        <a href="#impact" aria-label="Scroll to impact numbers" className="bounce-slow absolute bottom-24 left-1/2 hidden h-10 w-6 -translate-x-1/2 items-start justify-center rounded-full border-2 border-white/60 pt-2 md:flex">
           <span className="h-2 w-1 rounded-full bg-white/90" />
         </a>
         <Wave fill="#e6f3fd" />
